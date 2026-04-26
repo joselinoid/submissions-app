@@ -17,6 +17,7 @@ class PermissionSeeder extends Seeder
             'categories',
             'users',
             'submissions',
+            'role-permission',
         ];
 
         $actions = [

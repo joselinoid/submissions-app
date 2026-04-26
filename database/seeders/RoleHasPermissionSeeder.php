@@ -25,38 +25,27 @@ class RoleHasPermissionSeeder extends Seeder
             'PEJABAT4'
         ])->get();
 
-        /*
-        ---------------------------------------
-        ALL PERMISSIONS
-        ---------------------------------------
-        */
         $allPermissions = Permission::all();
 
-        /*
-        ---------------------------------------
-        🚫 ADMIN: NO submissions.*
-        ---------------------------------------
-        */
-        $adminPermissions = $allPermissions->reject(function ($perm) {
-            return $perm->group === 'submissions';
+        $adminPermissions = $allPermissions->filter(function ($perm) {
+            return in_array($perm->group, [
+                'categories',
+                'users',
+                'role-permission'
+            ]);
         });
 
         $admin->permissions()->sync($adminPermissions->pluck('id'));
 
-        /*
-        ---------------------------------------
-        👤 APPLICANT + PEJABAT:
-        🚫 NO categories.*
-        ---------------------------------------
-        */
-        $nonCategoryPermissions = $allPermissions->reject(function ($perm) {
-            return $perm->group === 'categories';
+
+        $submissionPermissions = $allPermissions->filter(function ($perm) {
+            return $perm->group === 'submissions';
         });
 
-        $applicant->permissions()->sync($nonCategoryPermissions->pluck('id'));
+        $applicant->permissions()->sync($submissionPermissions->pluck('id'));
 
         foreach ($pejabats as $role) {
-            $role->permissions()->sync($nonCategoryPermissions->pluck('id'));
+            $role->permissions()->sync($submissionPermissions->pluck('id'));
         }
     }
 }

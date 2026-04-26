@@ -34,12 +34,19 @@ class SubmissionController extends Controller
         abort_if($user->role->key === 'ADMIN', 403);
 
         $tab = request('tab', 'approval');
+        $search = request('search');
         $maxStepOrder = Workflow::max('step_order');
 
         $submissions = Submission::with([
             'status:id,key,label',
             'workflow:id,key,label,step_order,role_id'
         ])
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($query) use ($search) {
+                    $query->whereRaw('LOWER(applicant_name) LIKE ?', ['%' . strtolower($search) . '%'])
+                        ->orWhereRaw('LOWER(company_name) LIKE ?', ['%' . strtolower($search) . '%']);
+                });
+            })
 
             ->when($user->role->key === 'PEMOHON', function ($q) use ($user) {
                 $q->where('user_id', $user->id);
@@ -77,7 +84,8 @@ class SubmissionController extends Controller
             'submissions',
             'workflows',
             'statuses',
-            'tab'
+            'tab',
+            'search'
         ));
     }
 

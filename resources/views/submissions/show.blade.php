@@ -23,7 +23,7 @@
 
     <div class="flex w-full flex-col gap-4">
         <div class="bg-white flex flex-col gap-4 rounded-lg shadow-sm p-4">
-            <div class="flex justify-between items-center">
+            <div class="flex flex-col md:flex-row gap-4 justify-between">
                 <h1 class="font-bold text-lg">
                     Form Approval Transaksi Resmi Perusahaan
                 </h1>
@@ -66,7 +66,7 @@
                         @endif
                     @endif
 
-                        @if (@$canApprove && $isCheckByP3)
+                        @if (@$canApprove && $isCheckByP3 && $submission->status->key !== 'REVISION')
                             <form method="POST" action="{{ route('submissions.revision', $submission->id) }}">
                                 @csrf
                                 <button type="submit"
@@ -74,6 +74,15 @@
                                     Revisi
                                 </button>
                             </form>
+                        @endif
+
+                        @if($isApplicant && $isCheckByP3 && $submission->status->key === 'REVISION')
+                            <a
+                                href="{{ route('submissions.edit', $submission->id) }}"
+                                class="bg-amber-500 text-white px-4 py-2 text-sm font-medium rounded-lg hover:bg-amber-600"
+                            >
+                                Edit
+                            </a>
                         @endif
                 </div>
             </div>
@@ -377,15 +386,6 @@
             >
                 Kembali
             </a>
-
-            @if($isApplicant && $isCheckByP3)
-                <a
-                    href="{{ route('submissions.edit', $submission->id) }}"
-                    class="bg-gray-600 text-white px-4 py-2 text-sm font-medium rounded-lg hover:bg-gray-700"
-                >
-                    Edit
-                </a>
-            @endif
         </div>
     </div>
 @endsection
