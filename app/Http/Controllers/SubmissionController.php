@@ -425,10 +425,13 @@ class SubmissionController extends Controller
                     'amount' => $detail->amount,
                     'reference' => $detail->reference,
                     'counterparty' => $detail->counterparty,
-                    'account' => $detail->account,
+                    'bank_name'              => $detail['bank_name'] ?? null,
+                    'account_number'         => $detail['account_number'] ?? null,
+                    'account_name'           => $detail['account_name'] ?? null,
                     'planned_date' => $detail->planned_date,
                     'recognized_transaction' => $detail->recognized_transaction,
                     'note' => $detail->note,
+                    'file' => $detail->file,
                 ]);
             }
         });
